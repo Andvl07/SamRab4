@@ -2,37 +2,36 @@ import java.time.LocalDate;
 
 abstract class Account {
     String accountNumber;
-    double interestRate;
     double depositAmount;
     LocalDate openingDate;
     LocalDate closingDate;
+    InterestCalculator interestCalculator;
 
-    public Account(String accountNumber, double interestRate, double depositAmount, LocalDate openingDate) {
+    public Account(String accountNumber, double depositAmount, LocalDate openingDate, InterestCalculator interestCalculator) {
         this.accountNumber = accountNumber;
-        this.interestRate = interestRate;
         this.depositAmount = depositAmount;
         this.openingDate = openingDate;
-        this.closingDate = null; // Счет открыт, пока не закрыт
+        this.closingDate = null;
+        this.interestCalculator = interestCalculator;
     }
-
-    public Account(String accountNumber, double interestRate, double depositAmount, LocalDate openingDate, LocalDate closingDate) {
+  public Account(String accountNumber, double depositAmount, LocalDate openingDate,LocalDate closingDate, InterestCalculator interestCalculator) {
         this.accountNumber = accountNumber;
-        this.interestRate = interestRate;
         this.depositAmount = depositAmount;
         this.openingDate = openingDate;
         this.closingDate = closingDate;
+        this.interestCalculator = interestCalculator;
     }
-
+  
 
     public void closeAccount(LocalDate closingDate) {
         this.closingDate = closingDate;
     }
 
     public boolean isClosed(){
-      return this.closingDate != null;
+        return this.closingDate != null;
     }
 
-    public abstract double calculateInterest(); // Абстрактный метод для расчета процентов
+    public abstract double calculateInterest();
 
     public String getAccountNumber() {
         return accountNumber;
@@ -46,11 +45,14 @@ abstract class Account {
         return openingDate;
     }
 
+    public void setDepositAmount(double depositAmount) {
+        this.depositAmount = depositAmount;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
                 "accountNumber='" + accountNumber + '\'' +
-                ", interestRate=" + interestRate +
                 ", depositAmount=" + depositAmount +
                 ", openingDate=" + openingDate +
                 ", closingDate=" + closingDate +

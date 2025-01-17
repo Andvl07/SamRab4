@@ -1,25 +1,25 @@
 import java.time.LocalDate;
-
 import java.util.List;
-
 
 public class Main {
     public static void main(String[] args) {
         BankOperations bank = new BankOperations();
+        InterestCalculator simpleInterest = new SimpleInterestCalculator();
 
         // Добавляем клиентов
         bank.addClient("Иванов", "123456",
-                new BankAccount("1001", 0.05, 10000, LocalDate.of(2022, 1, 1)),
-                new BankAccount("1002", 0.07, 20000, LocalDate.of(2023, 5, 15)));
+                new BankAccount("1001", 10000, LocalDate.of(2022, 1, 1), 0.05, simpleInterest),
+                new BankAccount("1002", 20000, LocalDate.of(2023, 5, 15), 0.07, simpleInterest)
+        );
         bank.addClient("Петров", "654321",
-                new BankAccount("2001", 0.06, 15000, LocalDate.of(2023, 2, 10)),
-                new BankAccount("2002", 0.08, 30000, LocalDate.of(2024, 1, 1)),
-                new BankAccount("2003", 0.08, 1000, LocalDate.of(2021, 1, 1), LocalDate.of(2022, 1, 1)));
-
+                new BankAccount("2001", 15000, LocalDate.of(2023, 2, 10), 0.06, simpleInterest),
+                new BankAccount("2002", 30000, LocalDate.of(2024, 1, 1), 0.08, simpleInterest),
+                new BankAccount("2003", 1000, LocalDate.of(2021, 1, 1),LocalDate.of(2022, 1, 1) ,0.08, simpleInterest)
+        );
         bank.printClients();
 
         // Находим клиента с наибольшей суммой процентов
-        BankClient maxInterestClient = bank.findClientWithMaxInterest();
+        Client maxInterestClient = bank.findClientWithMaxInterest();
         double maxInterestAmount = bank.getMaxInterestAmount();
         if (maxInterestClient != null) {
             System.out.println("\nКлиент с наибольшей суммой процентов: " + maxInterestClient.getLastName() +
@@ -40,14 +40,16 @@ public class Main {
 
         // Добавляем новых клиентов
         bank.addClient("Сидоров", "987654",
-                new BankAccount("3001", 0.04, 25000, LocalDate.of(2023, 10, 1)));
+                new BankAccount("3001", 25000, LocalDate.of(2023, 10, 1), 0.04, simpleInterest));
         System.out.println("\nПосле добавления новых клиентов:");
         bank.printClients();
 
         // Закрываем счет
-        BankClient petrov = bank.findClientByAccount("2003");
-        petrov.getAccounts().stream().filter(account -> account.getAccountNumber().equals("2003")).findFirst()
-                .ifPresent(account -> account.closeAccount(LocalDate.now()));
+      Client petrov = bank.findClientByAccount("2003");
+      if (petrov != null) {
+        petrov.getAccounts().stream().filter(account -> account.getAccountNumber().equals("2003")).findFirst().ifPresent(account -> account.closeAccount(LocalDate.now()));
+      }
+
 
         // Удаляем клиентов, закрывших все счета
         bank.removeClosedAccountClients();
@@ -55,7 +57,7 @@ public class Main {
         bank.printClients();
 
         // Находим клиентов с долгосрочными вкладами
-        List<BankClient> longTermClients = bank.findClientsWithLongTermDeposits(2);
+        List<Client> longTermClients = bank.findClientsWithLongTermDeposits(2);
         System.out.println("\nКлиенты с вкладами на 2 года и более:");
         longTermClients.forEach(client -> System.out.println(client.getLastName()));
     }
